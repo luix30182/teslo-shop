@@ -9,14 +9,10 @@ type Data =
 	  }
 	| IProduct[];
 
-export default async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse<Data>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
 	switch (req.method) {
 		case 'GET':
 			return getProducts(req, res);
-			break;
 
 		default:
 			return res.status(400).json({ message: 'Bad request' });
@@ -30,9 +26,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 		condition = { gender };
 	}
 	await db.connect();
-	const products = await Product.find(condition)
-		.select('title images price inStock slug -_id')
-		.lean();
+	const products = await Product.find(condition).select('title images price inStock slug -_id').lean();
 
 	await db.disconnect();
 
