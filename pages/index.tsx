@@ -4,6 +4,7 @@ import { ShopLayout } from '../components/layouts';
 import { initialData } from '../database/products';
 import { ProductList } from '../components/products/ProductList';
 import { useProducts } from '../hooks';
+import { FullScreenLoading } from '../components/ui';
 
 const Home: NextPage = () => {
 	const { products, isLoading, isError } = useProducts('/products');
@@ -17,7 +18,7 @@ const Home: NextPage = () => {
 				All products
 			</Typography>
 
-			{isLoading ? <h1>Loading...</h1> : <ProductList products={products} />}
+			{isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
 		</ShopLayout>
 	);
 };
