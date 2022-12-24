@@ -1,12 +1,12 @@
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 import { NextPage } from 'next';
-import { ShopLayout } from '../../components/layouts/ShopLayout';
-import { ProductSlideshow, SizeSelector } from '../../components/products';
-import { ItemCounter } from '../../components/ui';
-import { initialData } from '../../database/products';
-import { IProduct } from '../../interfaces/products';
+import { ShopLayout } from '@/components/layouts/ShopLayout';
+import { ProductSlideshow, SizeSelector } from '@/components/products';
+import { ItemCounter } from '@/components/ui';
+import { initialData } from '@/database/products';
+import { IProduct } from '@/interfaces/products';
 import { GetServerSideProps } from 'next';
-import { dbProducts } from '../../database';
+import { dbProducts } from '@/database/index';
 
 const product = initialData.products[0];
 
