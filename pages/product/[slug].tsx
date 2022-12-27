@@ -5,8 +5,9 @@ import { ProductSlideshow, SizeSelector } from '@/components/products';
 import { ItemCounter } from '@/components/ui';
 import { initialData } from '@/database/products';
 import { IProduct } from '@/interfaces/products';
-import { GetServerSideProps } from 'next';
+import { GetStaticPaths } from 'next';
 import { dbProducts } from '@/database/index';
+import { GetStaticProps } from 'next';
 
 const product = initialData.products[0];
 
@@ -61,8 +62,40 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-	const { slug } = params as { slug: string };
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+// 	const { slug } = params as { slug: string };
+// 	const product = await dbProducts.getProductsBySlug(slug);
+
+// 	if (!product) {
+// 		return {
+// 			redirect: {
+// 				destination: '/',
+// 				permanent: false
+// 			}
+// 		};
+// 	}
+
+// 	return {
+// 		props: { product }
+// 	};
+// };
+
+export const getStaticPaths: GetStaticPaths = async ctx => {
+	const productSlugs = await dbProducts.getAllProductSlugs();
+
+	return {
+		paths: productSlugs.map(({ slug }) => ({
+			params: {
+				slug
+			}
+		})),
+		fallback: 'blocking'
+	};
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+	const { slug = '' } = (await params) as { slug: string };
+
 	const product = await dbProducts.getProductsBySlug(slug);
 
 	if (!product) {
@@ -75,7 +108,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 	}
 
 	return {
-		props: { product }
+		props: { product },
+		revalidate: 60 * 60 * 24
 	};
 };
 
