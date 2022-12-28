@@ -54,7 +54,7 @@ export const SideMenu = () => {
 		>
 			<Box sx={{ width: 250, paddingTop: 5 }}>
 				<List>
-					<ListItem>
+					<ListItem sx={{ display: { xs: 'flex', sm: 'none' } }}>
 						<Input
 							autoFocus
 							value={searchTerm}
