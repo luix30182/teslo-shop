@@ -4,10 +4,11 @@ import { ShopLayout } from '@/components/layouts/ShopLayout';
 import { ProductSlideshow, SizeSelector } from '@/components/products';
 import { ItemCounter } from '@/components/ui';
 import { initialData } from '@/database/products';
-import { IProduct } from '@/interfaces/products';
+import { IProduct, ICartProduct, ISize } from '@/interfaces/index';
 import { GetStaticPaths } from 'next';
 import { dbProducts } from '@/database/index';
 import { GetStaticProps } from 'next';
+import { useState } from 'react';
 
 const product = initialData.products[0];
 
@@ -16,6 +17,21 @@ interface Props {
 }
 
 const ProductPage: NextPage<Props> = ({ product }) => {
+	const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+		image: product.images[0],
+		price: product.price,
+		size: undefined,
+		slug: product.slug,
+		title: product.title,
+		gender: product.gender,
+		_id: product._id,
+		quantity: 1
+	});
+
+	const onSelecteedSize = (size: ISize) => {
+		setTempCartProduct(currentProduct => ({ ...currentProduct, size }));
+	};
+
 	return (
 		<ShopLayout title={product.title} pageDescription={product.description}>
 			<Grid container spacing={3}>
@@ -35,18 +51,20 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 						<Box sx={{ my: 2 }}>
 							<Typography variant="subtitle2">Quantity</Typography>
 							<ItemCounter />
-							<SizeSelector selectedSize={product.sizes[3]} sizes={product.sizes} />
+							<SizeSelector
+								selectedSize={tempCartProduct.size}
+								sizes={product.sizes}
+								onSelecteedSize={onSelecteedSize}
+							/>
 						</Box>
 
-						<Button color="secondary" className="circular-btn">
-							Add to cart
-						</Button>
-
-						{/* <Chip
-              label="Product not available"
-              color="error"
-              variant="outlined"
-            /> */}
+						{product.inStock > 0 ? (
+							<Button color="secondary" className="circular-btn">
+								{tempCartProduct.size ? 'Add to cart' : 'Select a size'}
+							</Button>
+						) : (
+							<Chip label="Product not available" color="error" variant="outlined" />
+						)}
 
 						<Box sx={{ mt: 3 }}>
 							<Typography variant="subtitle2">Description</Typography>
