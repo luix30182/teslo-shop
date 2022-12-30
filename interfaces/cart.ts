@@ -9,4 +9,5 @@ export interface ICartProduct {
 	gender: 'men' | 'women' | 'kid' | 'unisex';
 	_id: string;
 	quantity: number;
+	inStock: number;
 }

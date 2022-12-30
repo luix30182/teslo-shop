@@ -18,5 +18,22 @@ interface Props {
 export const CartProvider: FC<Props> = ({ children }) => {
 	const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
 
-	return <CartContext.Provider value={{ ...state }}>{children}</CartContext.Provider>;
+	const addProductToCart = (product: ICartProduct) => {
+		const productInCart = state.cart.find(p => p._id === product._id && p.size === product.size);
+		if (productInCart) {
+			dispatch({
+				type: '[Cart] - Add product',
+				payload: state.cart.map(p => {
+					if (p._id === productInCart._id && p.size === product.size) {
+						p.quantity = p.quantity + product.quantity;
+					}
+					return p;
+				})
+			});
+		} else {
+			dispatch({ type: '[Cart] - Add product', payload: [...state.cart, product] });
+		}
+	};
+
+	return <CartContext.Provider value={{ ...state, addProductToCart }}>{children}</CartContext.Provider>;
 };
