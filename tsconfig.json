@@ -20,6 +20,7 @@
 			"@/interfaces/*": ["interfaces/*"],
 			"@/database/*": ["database/*"],
 			"@/context/*": ["context/*"],
+			"@/utils/*": ["utils/*"],
 		}
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
