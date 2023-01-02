@@ -2,8 +2,8 @@ import type { AppProps } from 'next/app';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { lightTheme } from '../themes';
 import { SWRConfig } from 'swr';
-import { UiProvider } from '../context/ui/uiProvider';
-import { CartProvider } from '../context/cart/CartProvider';
+import { UiProvider } from '@/context/ui/uiProvider';
+import { CartProvider } from '@/context/cart/CartProvider';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {

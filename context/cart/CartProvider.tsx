@@ -1,7 +1,7 @@
 import { FC, useEffect, useReducer } from 'react';
-import { ICartProduct } from '@/interfaces/cart';
-import { CartContext } from './CartContext';
 import { cartReducer } from './cartReducer';
+import { ICartProduct } from '@/interfaces/index';
+import { CartContext } from './CartContext';
 import Cookie from 'js-cookie';
 
 export interface CartState {
@@ -12,7 +12,7 @@ export interface CartState {
 	total: number;
 }
 
-const CART_INITIAL_STATE = {
+const CART_INITIAL_STATE: CartState = {
 	cart: [],
 	numberOfItems: 0,
 	subTotal: 0,
@@ -27,11 +27,12 @@ interface Props {
 export const CartProvider: FC<Props> = ({ children }) => {
 	const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
 
+	// Efecto
 	useEffect(() => {
 		try {
-			const cartInCookies = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : [];
-			dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: cartInCookies });
-		} catch (err) {
+			const cookieProducts = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : [];
+			dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: cookieProducts });
+		} catch (error) {
 			dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });
 		}
 	}, []);
@@ -41,8 +42,8 @@ export const CartProvider: FC<Props> = ({ children }) => {
 	}, [state.cart]);
 
 	useEffect(() => {
-		const numberOfItems = state.cart.reduce((prev, curr) => curr.quantity + prev, 0);
-		const subTotal = state.cart.reduce((prev, curr) => curr.price * curr.quantity + prev, 0);
+		const numberOfItems = state.cart.reduce((prev, current) => current.quantity + prev, 0);
+		const subTotal = state.cart.reduce((prev, current) => current.price * current.quantity + prev, 0);
 		const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
 
 		const orderSummary = {
@@ -56,24 +57,29 @@ export const CartProvider: FC<Props> = ({ children }) => {
 	}, [state.cart]);
 
 	const addProductToCart = (product: ICartProduct) => {
-		const productInCart = state.cart.find(p => p._id === product._id && p.size === product.size);
-		if (productInCart) {
-			dispatch({
-				type: '[Cart] - Add product',
-				payload: state.cart.map(p => {
-					if (p._id === productInCart._id && p.size === product.size) {
-						p.quantity = p.quantity + product.quantity;
-					}
-					return p;
-				})
-			});
-		} else {
-			dispatch({ type: '[Cart] - Add product', payload: [...state.cart, product] });
-		}
+		const productInCart = state.cart.some(p => p._id === product._id);
+		if (!productInCart)
+			return dispatch({ type: '[Cart] - Update products in cart', payload: [...state.cart, product] });
+
+		const productInCartButDifferentSize = state.cart.some(p => p._id === product._id && p.size === product.size);
+		if (!productInCartButDifferentSize)
+			return dispatch({ type: '[Cart] - Update products in cart', payload: [...state.cart, product] });
+
+		// Acumular
+		const updatedProducts = state.cart.map(p => {
+			if (p._id !== product._id) return p;
+			if (p.size !== product.size) return p;
+
+			// Actualizar la cantidad
+			p.quantity += product.quantity;
+			return p;
+		});
+
+		dispatch({ type: '[Cart] - Update products in cart', payload: updatedProducts });
 	};
 
 	const updateCartQuantity = (product: ICartProduct) => {
-		dispatch({ type: '[Cart] - Change product quantity', payload: product });
+		dispatch({ type: '[Cart] - Change cart quantity', payload: product });
 	};
 
 	const removeCartProduct = (product: ICartProduct) => {
@@ -81,7 +87,16 @@ export const CartProvider: FC<Props> = ({ children }) => {
 	};
 
 	return (
-		<CartContext.Provider value={{ ...state, addProductToCart, updateCartQuantity, removeCartProduct }}>
+		<CartContext.Provider
+			value={{
+				...state,
+
+				// Methods
+				addProductToCart,
+				removeCartProduct,
+				updateCartQuantity
+			}}
+		>
 			{children}
 		</CartContext.Provider>
 	);
