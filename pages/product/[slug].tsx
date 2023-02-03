@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 import { ShopLayout } from '@/components/layouts/ShopLayout';
 import { ProductSlideshow, SizeSelector } from '@/components/products';
 import { ItemCounter } from '@/components/ui';
-import { initialData } from '@/database/products';
+import { initialData } from '@/database/seed-data';
 import { IProduct, ICartProduct, ISize } from '@/interfaces/index';
 import { GetStaticPaths } from 'next';
 import { dbProducts } from '@/database/index';
@@ -69,7 +69,9 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 							<ItemCounter
 								currentValue={tempCartProduct.quantity || 1}
 								updatedQuantity={onUpdatedQuantity}
-								maxValue={tempCartProduct.inStock > 5 ? 5 : tempCartProduct.inStock}
+								maxValue={
+									tempCartProduct.inStock > 5 ? 5 : tempCartProduct.inStock
+								}
 							/>
 							<SizeSelector
 								selectedSize={tempCartProduct.size}
@@ -88,7 +90,11 @@ const ProductPage: NextPage<Props> = ({ product }) => {
 								{tempCartProduct.size ? 'Add to cart' : 'Select a size'}
 							</Button>
 						) : (
-							<Chip label="Product not available" color="error" variant="outlined" />
+							<Chip
+								label="Product not available"
+								color="error"
+								variant="outlined"
+							/>
 						)}
 
 						<Box sx={{ mt: 3 }}>

@@ -21,6 +21,7 @@
 			"@/database/*": ["database/*"],
 			"@/context/*": ["context/*"],
 			"@/utils/*": ["utils/*"],
+			"@/models/*": ["models/*"],
 		}
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
