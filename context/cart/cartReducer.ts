@@ -2,7 +2,10 @@ import { ICartProduct } from '@/interfaces/cart';
 import { CartState } from './';
 
 type CartActionType =
-	| { type: '[Cart] - LoadCart from cookies | storage'; payload: ICartProduct[] }
+	| {
+			type: '[Cart] - LoadCart from cookies | storage';
+			payload: ICartProduct[];
+	  }
 	| { type: '[Cart] - Update products in cart'; payload: ICartProduct[] }
 	| { type: '[Cart] - Change cart quantity'; payload: ICartProduct }
 	| { type: '[Cart] - Remove product in cart'; payload: ICartProduct }
@@ -16,10 +19,13 @@ type CartActionType =
 			};
 	  };
 
-export const cartReducer = (state: CartState, action: CartActionType): CartState => {
+export const cartReducer = (
+	state: CartState,
+	action: CartActionType
+): CartState => {
 	switch (action.type) {
 		case '[Cart] - LoadCart from cookies | storage':
-			return { ...state, cart: action.payload };
+			return { ...state, isLoaded: true, cart: action.payload };
 		case '[Cart] - Update products in cart':
 			return { ...state, cart: action.payload };
 		case '[Cart] - Change cart quantity':
@@ -35,7 +41,9 @@ export const cartReducer = (state: CartState, action: CartActionType): CartState
 		case '[Cart] - Remove product in cart':
 			return {
 				...state,
-				cart: state.cart.filter(p => !(p._id === action.payload._id && p.size === action.payload.size))
+				cart: state.cart.filter(
+					p => !(p._id === action.payload._id && p.size === action.payload.size)
+				)
 			};
 		case '[Cart] - Update order summary': {
 			return {

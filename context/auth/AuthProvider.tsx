@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import { tesloApi } from '../../api';
 import { IUser } from '../../interfaces';
+import { useRouter } from 'next/router';
 
 export interface AuthState {
 	isLoggedIn: boolean;
@@ -22,6 +23,7 @@ interface Props {
 
 export const AuthProvider: FC<Props> = ({ children }) => {
 	const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+	const router = useRouter();
 
 	useEffect(() => {
 		checkToken();
@@ -32,7 +34,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 			return;
 		}
 		try {
-			const { data } = await tesloApi.get('/user/validate-token');
+			const { data } = await tesloApi.get('/users/validate-token');
 			const { token, user } = data;
 			Cookies.set('token', token);
 			dispatch({ type: '[Auth] - Login', payload: user });
@@ -46,7 +48,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 		password: string
 	): Promise<boolean> => {
 		try {
-			const { data } = await tesloApi.post('/user/login', { email, password });
+			const { data } = await tesloApi.post('/users/login', { email, password });
 			const { token, user } = data;
 			Cookies.set('token', token);
 			dispatch({ type: '[Auth] - Login', payload: user });
@@ -62,7 +64,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 		password: string
 	): Promise<{ hasError: boolean; message?: string }> => {
 		try {
-			const { data } = await tesloApi.post('/user/register', {
+			const { data } = await tesloApi.post('/users/register', {
 				name,
 				email,
 				password
@@ -88,6 +90,12 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 		}
 	};
 
+	const logout = () => {
+		Cookies.remove('token');
+		Cookies.remove('cart');
+		router.reload();
+	};
+
 	return (
 		<AuthContext.Provider
 			value={{
@@ -95,7 +103,8 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
 				// Methods
 				loginUser,
-				registerUser
+				registerUser,
+				logout
 			}}
 		>
 			{children}
