@@ -14,7 +14,7 @@ import { countries } from '@/utils/countries';
 import { useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '../../context/cart/CartContext';
 
 type FormData = {
@@ -44,6 +44,11 @@ const getAddressFromCookies = (): FormData => {
 const Address = () => {
 	const router = useRouter();
 	const { updateAddress } = useContext(CartContext);
+	const [selectedValue, setSelectedValue] = useState(countries[0].code);
+
+	useEffect(() => {
+		setSelectedValue(Cookies.get('country') || countries[0].code);
+	}, []);
 
 	const {
 		register,
@@ -141,7 +146,7 @@ const Address = () => {
 						<FormControl fullWidth>
 							<TextField
 								select
-								defaultValue={countries[0].code}
+								value={selectedValue}
 								variant="filled"
 								label="Country"
 								{...register('country', {
