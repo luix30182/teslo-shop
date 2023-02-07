@@ -31,12 +31,22 @@ export default NextAuth({
 			}
 		})
 	],
+	pages: {
+		signIn: '/auth/login',
+		newUser: '/auth/register'
+	},
+	session: {
+		maxAge: 2592000,
+		strategy: 'jwt',
+		updateAge: 86400
+	},
 	callbacks: {
 		async jwt({ token, account, user }) {
 			if (account) {
 				token.accessToken = account.access_token;
 				switch (account.type) {
 					case 'oauth':
+						token.user = await dbUsers.oAuthToDbUser(user?.email!, user?.name!);
 						break;
 					case 'credentials':
 						token.user = user;
