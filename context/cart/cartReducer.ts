@@ -1,6 +1,6 @@
 import { ICartProduct } from '@/interfaces/cart';
+import { Address } from '@/interfaces/index';
 import { CartState } from './';
-import { Address } from './CartProvider';
 
 type CartActionType =
 	| {

@@ -4,7 +4,6 @@ import {
 	Button,
 	FormControl,
 	Grid,
-	InputLabel,
 	MenuItem,
 	Select,
 	TextField,
@@ -14,8 +13,8 @@ import { countries } from '@/utils/countries';
 import { useForm } from 'react-hook-form';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
-import { CartContext } from '../../context/cart/CartContext';
+import { useContext } from 'react';
+import { CartContext } from '@/context/cart/CartContext';
 
 type FormData = {
 	firstName: string;
@@ -44,11 +43,6 @@ const getAddressFromCookies = (): FormData => {
 const Address = () => {
 	const router = useRouter();
 	const { updateAddress } = useContext(CartContext);
-	const [selectedValue, setSelectedValue] = useState(countries[0].code);
-
-	useEffect(() => {
-		setSelectedValue(Cookies.get('country') || countries[0].code);
-	}, []);
 
 	const {
 		register,
@@ -144,9 +138,8 @@ const Address = () => {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<FormControl fullWidth>
-							<TextField
-								select
-								value={selectedValue}
+							<Select
+								defaultValue={countries[0].code}
 								variant="filled"
 								label="Country"
 								{...register('country', {
@@ -159,7 +152,7 @@ const Address = () => {
 										{country.name}
 									</MenuItem>
 								))}
-							</TextField>
+							</Select>
 						</FormControl>
 					</Grid>
 					<Grid item xs={12} sm={6}>

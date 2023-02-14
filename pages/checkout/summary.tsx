@@ -20,6 +20,8 @@ import { useRouter } from 'next/router';
 
 const SummaryPage = () => {
 	const router = useRouter();
+	const { shippingAddress, numberOfItems, createOrder } =
+		useContext(CartContext);
 
 	useEffect(() => {
 		if (!Cookies.get('firstName')) {
@@ -27,7 +29,9 @@ const SummaryPage = () => {
 		}
 	}, [router]);
 
-	const { shippingAddress, numberOfItems } = useContext(CartContext);
+	const onCreateOrder = () => {
+		createOrder();
+	};
 
 	return (
 		<ShopLayout title="Review order" pageDescription="Review order">
@@ -79,7 +83,12 @@ const SummaryPage = () => {
 
 							<OrderSummary />
 							<Box sx={{ mt: 3 }}>
-								<Button color="secondary" className="circular-btn" fullWidth>
+								<Button
+									color="secondary"
+									className="circular-btn"
+									fullWidth
+									onClick={onCreateOrder}
+								>
 									Place order
 								</Button>
 							</Box>
