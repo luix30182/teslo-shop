@@ -39,7 +39,6 @@ export const CartProvider: FC<Props> = ({ children }) => {
 			const cookieProducts = Cookies.get('cart')
 				? JSON.parse(Cookies.get('cart')!)
 				: [];
-			console.log('setting', cookieProducts);
 			dispatch({
 				type: '[Cart] - LoadCart from cookies | storage',
 				payload: cookieProducts
