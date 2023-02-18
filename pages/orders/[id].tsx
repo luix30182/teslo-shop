@@ -5,8 +5,6 @@ import {
 	CardContent,
 	Divider,
 	Box,
-	Button,
-	Link,
 	Chip
 } from '@mui/material';
 import {
@@ -19,6 +17,7 @@ import { dbOrders } from '@/database/index';
 import { IOrder } from '@/interfaces/IOrder';
 import { CartList, OrderSummary } from '@/components/cart';
 import { ShopLayout } from '@/components/layouts';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 
 interface Props {
 	order: IOrder;
@@ -91,7 +90,25 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 										icon={<CreditScoreOutlined />}
 									/>
 								) : (
-									<h3>Pay</h3>
+									<PayPalButtons
+										createOrder={(data, actions) => {
+											return actions.order.create({
+												purchase_units: [
+													{
+														amount: {
+															value: order.total.toString()
+														}
+													}
+												]
+											});
+										}}
+										onApprove={(data, actions) => {
+											return actions.order.capture().then(details => {
+												console.log(details);
+												const name = details.payer.name.given_name;
+											});
+										}}
+									/>
 								)}
 							</Box>
 						</CardContent>
