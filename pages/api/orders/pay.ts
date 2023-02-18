@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 import { PaypalOrderStatusResponse } from '@/interfaces/paypal';
-import db from '@/database/index';
 import Order from '@/models/Order';
+import { db } from '@/database/index';
 
 type Data = {
 	message: string;
@@ -67,24 +67,22 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 			}
 		}
 	);
-
 	await db.connect();
 	const dbOrder = await Order.findById(orderId);
-
 	if (!dbOrder) {
 		await db.disconnect();
 
 		return res.status(400).json({ message: 'Order not in the database' });
 	}
+	// if (dbOrder.total !== Number(data.purchase_units[0].amount.value)) {
+	// 	await db.disconnect();
 
-	if (dbOrder.total !== Number(data.purchase_units[0].amount.value)) {
-		await db.disconnect();
-
-		return res.status(400).json({ message: 'Information mismatch' });
-	}
+	// 	return res.status(400).json({ message: 'Information mismatch' });
+	// }
 
 	dbOrder.transactionId = transactionId;
 	dbOrder.isPaid = true;
+	await dbOrder.save();
 
 	await db.disconnect();
 
