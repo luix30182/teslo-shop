@@ -29,6 +29,7 @@ import {
 import { useRouter } from 'next/router';
 import { UiContext } from 'context';
 import { AuthContext } from '../../context/auth/AuthContext';
+import { DashboardOutlined } from '@mui/icons-material';
 
 export const SideMenu = () => {
 	const { user, isLoggedIn, logout } = useContext(AuthContext);
@@ -160,11 +161,11 @@ export const SideMenu = () => {
 							<Divider />
 							<ListSubheader>Admin Panel</ListSubheader>
 
-							<ListItem button>
+							<ListItem button onClick={() => navigateTo('/admin/')}>
 								<ListItemIcon>
-									<CategoryOutlined />
+									<DashboardOutlined />
 								</ListItemIcon>
-								<ListItemText primary={'Productos'} />
+								<ListItemText primary={'Dashboard'} />
 							</ListItem>
 							<ListItem button>
 								<ListItemIcon>
