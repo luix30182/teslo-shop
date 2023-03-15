@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { db } from '@/database/index';
 import { Order, User, Product } from '@/models/index';
+import { getToken } from 'next-auth/jwt';
 
 type Data = {
 	numberOfOrders: number;
@@ -16,7 +17,22 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data | { message: string }>
 ) {
+	const validRoles = ['admin', 'super-user', 'SEO'];
+
 	try {
+		const session: any = await getToken({
+			req,
+			secret: process.env.NEXTAUTH_SECRET
+		})!;
+
+		if (!session) {
+			return res.status(401).json({ message: 'Not authorized' });
+		}
+
+		if (!validRoles.includes(session.user.role)) {
+			return res.status(401).json({ message: 'Not authorized' });
+		}
+
 		await db.connect();
 
 		const [

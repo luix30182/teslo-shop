@@ -16,14 +16,11 @@ export const withRole: MiddlewareFactory = (next: NextMiddleware) => {
 		})!;
 		const validRoles = ['admin', 'super-user', 'SEO'];
 
-		if (req.nextUrl.pathname.startsWith('/api')) {
-		} else {
-			if (req.nextUrl.pathname.startsWith('/admin')) {
-				if (!validRoles.includes(session.user.role)) {
-					const url = req.nextUrl.clone();
-					url.pathname = ``;
-					return NextResponse.redirect(url);
-				}
+		if (req.nextUrl.pathname.startsWith('/admin')) {
+			if (!validRoles.includes(session.user.role)) {
+				const url = req.nextUrl.clone();
+				url.pathname = ``;
+				return NextResponse.redirect(url);
 			}
 		}
 
