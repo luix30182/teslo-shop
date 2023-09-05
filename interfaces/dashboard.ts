@@ -7,3 +7,5 @@ export interface DashboardSummary {
 	productsWithNoInventory: number;
 	lowInventory: number;
 }
+
+export const validRoles = ['admin', 'client', 'super-user', 'SEO'];
